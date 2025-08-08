@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>헬스케어 앱 경쟁사 분석</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .analysis-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .app-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .app-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .features-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-box {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            color: #666;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .pros {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .cons {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .opportunity {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .opportunity h3 {
+            margin-bottom: 10px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        @media (max-width: 768px) {
+            .features-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 헬스케어 앱 경쟁사 분석</h1>
+        
+        <div class="analysis-grid">
+            <!-- Noom 분석 -->
+            <div class="app-card">
+                <div class="app-header">
+                    <div class="app-name">Noom</div>
+                    <div class="app-stats">
+                        <div class="stat">
+                            <div class="stat-value">10M+</div>
+                            <div class="stat-label">다운로드</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">$59</div>
+                            <div class="stat-label">월 구독료</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-section">
+                    <div class="feature-box">
+                        <div class="feature-title">핵심 기능</div>
+                        <ul class="feature-list">
+                            <li>AI 기반 개인 코칭</li>
+                            <li>심리학 기반 행동 변화</li>
+                            <li>식단 로깅 및 분석</li>
+                            <li>일일 레슨 콘텐츠</li>
+                        </ul>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-title">타겟 고객</div>
+                        <ul class="feature-list">
+                            <li>30-50대 여성</li>
+                            <li>체중 감량 목표</li>
+                            <li>Premium 유료 결제 가능층</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <strong>👍 장점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• 과학적 접근법</li>
+                            <li>• 높은 사용자 만족도</li>
+                            <li>• 체계적인 커리큘럼</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <strong>👎 단점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• 매우 비싼 가격</li>
+                            <li>• 영어 중심 콘텐츠</li>
+                            <li>• 운동 기능 부족</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="opportunity">
+                    <h3>🎯 우리의 기회</h3>
+                    <p>한국 시장 맞춤형 콘텐츠 + 운동과 식단 통합 + 합리적 가격 (월 9,900원)</p>
+                </div>
+            </div>
+            
+            <!-- 캐시워크 분석 -->
+            <div class="app-card">
+                <div class="app-header">
+                    <div class="app-name">캐시워크</div>
+                    <div class="app-stats">
+                        <div class="stat">
+                            <div class="stat-value">10M+</div>
+                            <div class="stat-label">다운로드</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">무료</div>
+                            <div class="stat-label">리워드 모델</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-section">
+                    <div class="feature-box">
+                        <div class="feature-title">핵심 기능</div>
+                        <ul class="feature-list">
+                            <li>걸음 수 측정</li>
+                            <li>현금 리워드 지급</li>
+                            <li>광고 시청 보상</li>
+                            <li>쇼핑 연계</li>
+                        </ul>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-title">수익 모델</div>
+                        <ul class="feature-list">
+                            <li>광고 수익</li>
+                            <li>제휴 커머스</li>
+                            <li>데이터 판매</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <strong>👍 장점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• 강력한 동기부여</li>
+                            <li>• 매우 높은 DAU</li>
+                            <li>• 바이럴 효과</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <strong>👎 단점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• 건강 기능 빈약</li>
+                            <li>• 광고 피로감</li>
+                            <li>• 낮은 ARPU</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="opportunity">
+                    <h3>🎯 우리의 기회</h3>
+                    <p>리워드 + 전문적 건강관리 결합, 광고 최소화, 프리미엄 기능으로 수익화</p>
+                </div>
+            </div>
+            
+            <!-- Nike Training Club 분석 -->
+            <div class="app-card">
+                <div class="app-header">
+                    <div class="app-name">Nike Training Club</div>
+                    <div class="app-stats">
+                        <div class="stat">
+                            <div class="stat-value">10M+</div>
+                            <div class="stat-label">다운로드</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">무료</div>
+                            <div class="stat-label">브랜드 마케팅</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-section">
+                    <div class="feature-box">
+                        <div class="feature-title">핵심 기능</div>
+                        <ul class="feature-list">
+                            <li>전문 트레이너 영상</li>
+                            <li>맞춤형 운동 프로그램</li>
+                            <li>Apple Watch 연동</li>
+                            <li>소셜 공유 기능</li>
+                        </ul>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-title">강점</div>
+                        <ul class="feature-list">
+                            <li>높은 콘텐츠 퀄리티</li>
+                            <li>브랜드 파워</li>
+                            <li>글로벌 커뮤니티</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <strong>👍 장점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• 프로급 운동 콘텐츠</li>
+                            <li>• 완전 무료</li>
+                            <li>• 우수한 UX</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <strong>👎 단점</strong>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• AI 자세 교정 없음</li>
+                            <li>• 건강 통합 관리 부족</li>
+                            <li>• 한국 콘텐츠 부족</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="opportunity">
+                    <h3>🎯 우리의 기회</h3>
+                    <p>AI 실시간 자세 교정 + 건강 데이터 통합 + 한국형 운동 프로그램</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 종합 분석 -->
+        <div class="summary-card">
+            <h2>📊 시장 기회 종합 분석</h2>
+            
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <h3>🎯 핵심 차별화 포인트</h3>
+                    <p>AI 자세 분석 + 통합 건강관리 + 한국 맞춤 콘텐츠</p>
+                </div>
+                
+                <div class="summary-item">
+                    <h3>💰 가격 전략</h3>
+                    <p>월 9,900원 (Noom의 1/6 가격)</p>
+                </div>
+                
+                <div class="summary-item">
+                    <h3>👥 타겟 고객</h3>
+                    <p>20-40대 건강 관심층 + 시니어 확장</p>
+                </div>
+                
+                <div class="summary-item">
+                    <h3>🚀 진입 전략</h3>
+                    <p>AI 홈트레이닝으로 시작 → 통합 플랫폼 확장</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
