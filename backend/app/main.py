@@ -289,3 +289,8 @@ async def upload_image(file: UploadFile = File(...)):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# app/main.py 끝에 추가
+from app.websocket_server import websocket_endpoint, get_websocket_metrics
+
+# WebSocket 라우트는 자동으로 추가됨
