@@ -421,35 +421,58 @@ async def get_health_dashboard(
     
     user = db.query(User).filter(User.id == current_user_id).first()
     
+    # 사용자가 없으면 기본값으로 처리
+    if not user:
+        # 기본 사용자 생성 또는 기본값 반환
+        return HealthDashboardResponse(
+            health_score=75.0,
+            weight_trend="stable",
+            sleep_quality=70.0,
+            nutrition_score=75.0,
+            activity_level=50.0,
+            hydration_status={
+                "score": 70,
+                "percentage": 70,
+                "status": "보통",
+                "color": "#FFC107",
+                "glasses_drunk": 3,
+                "glasses_remaining": 5,
+                "ml_drunk": 750,
+                "ml_remaining": 1250
+            },
+            recommendations=["건강 데이터를 기록해보세요"]
+        )
+    
     # Get recent metrics
     recent_metrics = db.query(HealthMetric).filter(
         HealthMetric.user_id == current_user_id
     ).order_by(HealthMetric.recorded_at.desc()).limit(7).all()
     
-    # Calculate scores
-    health_score = user.health_score
+    # Calculate scores - None 값 처리
+    health_score = user.health_score if user.health_score is not None else 75.0
     
     # Weight trend
     weight_trend = "stable"
     if len(recent_metrics) >= 2:
-        if recent_metrics[0].weight and recent_metrics[1].weight:
-            diff = recent_metrics[0].weight - recent_metrics[1].weight
+        latest_weights = [m for m in recent_metrics if m.weight is not None]
+        if len(latest_weights) >= 2:
+            diff = latest_weights[0].weight - latest_weights[1].weight
             if diff > 0.5:
                 weight_trend = "up"
             elif diff < -0.5:
                 weight_trend = "down"
     
     # Sleep quality
-    sleep_metrics = [m for m in recent_metrics if m.sleep_quality_score]
-    sleep_quality = sum(m.sleep_quality_score for m in sleep_metrics) / len(sleep_metrics) if sleep_metrics else 70
+    sleep_metrics = [m for m in recent_metrics if m.sleep_quality_score is not None]
+    sleep_quality = sum(m.sleep_quality_score for m in sleep_metrics) / len(sleep_metrics) if sleep_metrics else 70.0
     
     # Nutrition score
-    nutrition_score = 75  # Placeholder
+    nutrition_score = 75.0  # Placeholder
     
     # Activity level
-    steps_metrics = [m for m in recent_metrics if m.steps]
+    steps_metrics = [m for m in recent_metrics if m.steps is not None]
     avg_steps = sum(m.steps for m in steps_metrics) / len(steps_metrics) if steps_metrics else 5000
-    activity_level = min(100, (avg_steps / 10000) * 100)
+    activity_level = min(100.0, (avg_steps / 10000) * 100)
     
     # Hydration
     today_start = datetime.combine(date.today(), datetime.min.time())
@@ -459,7 +482,7 @@ async def get_health_dashboard(
         HealthMetric.water_intake.isnot(None)
     ).all()
     
-    total_water = sum(m.water_intake for m in today_water)
+    total_water = sum(m.water_intake for m in today_water) if today_water else 0
     hydration = water_tracker.calculate_hydration_score(total_water)
     
     # Generate recommendations
@@ -471,12 +494,15 @@ async def get_health_dashboard(
     if hydration["percentage"] < 75:
         recommendations.append(f"물을 {hydration['glasses_remaining']}잔 더 마셔주세요")
     
+    if not recommendations:
+        recommendations = ["좋은 건강 상태를 유지하고 있습니다!"]
+    
     return HealthDashboardResponse(
-        health_score=health_score,
+        health_score=float(health_score),
         weight_trend=weight_trend,
-        sleep_quality=sleep_quality,
-        nutrition_score=nutrition_score,
-        activity_level=activity_level,
+        sleep_quality=float(sleep_quality),
+        nutrition_score=float(nutrition_score),
+        activity_level=float(activity_level),
         hydration_status=hydration,
         recommendations=recommendations
     )

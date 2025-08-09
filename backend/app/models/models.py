@@ -1,37 +1,14 @@
+# app/models/models.py
 """
-Database Models for Healthcare Platform
+Database Models for Healthcare Platform (SQLite Compatible)
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, JSON, Enum, Date
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, JSON, Date, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
-import enum
 
 Base = declarative_base()
-
-# ========================
-# Enums
-# ========================
-
-class GenderEnum(str, Enum):
-    MALE = "male"
-    FEMALE = "female"
-    OTHER = "other"
-
-class ExerciseTypeEnum(str, enum.Enum):
-    SQUAT = "squat"
-    PUSHUP = "pushup"
-    PLANK = "plank"
-    LUNGE = "lunge"
-    JUMPING_JACK = "jumping_jack"
-    SHOULDER_PRESS = "shoulder_press"
-
-class SubscriptionTierEnum(str, enum.Enum):
-    FREE = "free"
-    BASIC = "basic"
-    PREMIUM = "premium"
-    PRO = "pro"
 
 # ========================
 # User Models
@@ -41,22 +18,22 @@ class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String, nullable=False)
+    email = Column(String(255), unique=True, index=True)
+    hashed_password = Column(String(255), nullable=False)
     
     # Profile
-    name = Column(String, nullable=False)
+    name = Column(String(255), nullable=False)
     birth_date = Column(Date)
-    gender = Column(String(10))  # Enum 대신 일반 문자열 사용
+    gender = Column(String(10))  # 'male', 'female', 'other'
     height = Column(Float)  # cm
     weight = Column(Float)  # kg
-    profile_image = Column(String)
+    profile_image = Column(String(500))
     
     # Health Score
     health_score = Column(Float, default=75.0)
     
-    # Subscription
-    subscription_tier = Column(Enum(SubscriptionTierEnum), default=SubscriptionTierEnum.FREE)
+    # Subscription (String instead of Enum for SQLite)
+    subscription_tier = Column(String(20), default='FREE')  # 'FREE', 'BASIC', 'PREMIUM', 'PRO'
     subscription_expires = Column(DateTime)
     
     # Metadata
@@ -71,9 +48,7 @@ class User(Base):
     health_metrics = relationship("HealthMetric", back_populates="user", cascade="all, delete-orphan")
     goals = relationship("Goal", back_populates="user", cascade="all, delete-orphan")
     achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
-     # ... 다른 필드들
-    created_at = Column(DateTime, default=datetime.utcnow)  # 이 필드가 있어야 함
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 # ========================
 # Workout Models
 # ========================
@@ -85,7 +60,7 @@ class Workout(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
     # Workout Details
-    exercise_type = Column(Enum(ExerciseTypeEnum), nullable=False)
+    exercise_type = Column(String(50), nullable=False)  # 'squat', 'pushup', 'plank', etc.
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime)
     duration = Column(Integer)  # seconds
@@ -97,9 +72,9 @@ class Workout(Base):
     max_form_score = Column(Float)
     min_form_score = Column(Float)
     
-    # Analysis Data
-    angles_data = Column(JSON)  # Store angle measurements over time
-    stage_transitions = Column(JSON)  # Track stage changes
+    # Analysis Data (JSON as Text for SQLite)
+    angles_data = Column(Text)  # JSON string
+    stage_transitions = Column(Text)  # JSON string
     
     # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -181,13 +156,13 @@ class Goal(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
-    title = Column(String, nullable=False)
-    description = Column(String)
-    category = Column(String)  # weight_loss, muscle_gain, endurance, etc.
+    title = Column(String(255), nullable=False)
+    description = Column(Text)
+    category = Column(String(50))  # weight_loss, muscle_gain, endurance, etc.
     
     # Target
     target_value = Column(Float)
-    target_unit = Column(String)  # kg, reps, minutes, etc.
+    target_unit = Column(String(20))  # kg, reps, minutes, etc.
     current_value = Column(Float, default=0)
     
     # Timeline
@@ -211,14 +186,14 @@ class Achievement(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     
-    name = Column(String, nullable=False, unique=True)
-    description = Column(String)
-    category = Column(String)  # workout, health, streak, milestone
-    icon = Column(String)
+    name = Column(String(255), nullable=False, unique=True)
+    description = Column(Text)
+    category = Column(String(50))  # workout, health, streak, milestone
+    icon = Column(String(100))
     points = Column(Integer, default=10)
     
     # Requirements
-    requirement_type = Column(String)  # count, streak, total
+    requirement_type = Column(String(50))  # count, streak, total
     requirement_value = Column(Integer)
     
     # Relationships
@@ -249,7 +224,7 @@ class Friendship(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     friend_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
-    status = Column(String, default="pending")  # pending, accepted, blocked
+    status = Column(String(20), default="pending")  # pending, accepted, blocked
     created_at = Column(DateTime, default=datetime.utcnow)
     accepted_at = Column(DateTime)
 
@@ -259,10 +234,10 @@ class Challenge(Base):
     id = Column(Integer, primary_key=True, index=True)
     creator_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
-    title = Column(String, nullable=False)
-    description = Column(String)
-    challenge_type = Column(String)  # individual, team
-    exercise_type = Column(Enum(ExerciseTypeEnum))
+    title = Column(String(255), nullable=False)
+    description = Column(Text)
+    challenge_type = Column(String(20))  # individual, team
+    exercise_type = Column(String(50))  # squat, pushup, plank, etc.
     
     # Target
     target_reps = Column(Integer)
@@ -312,17 +287,17 @@ class WorkoutProgram(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     
-    name = Column(String, nullable=False)
-    description = Column(String)
-    difficulty = Column(String)  # beginner, intermediate, advanced
+    name = Column(String(255), nullable=False)
+    description = Column(Text)
+    difficulty = Column(String(20))  # beginner, intermediate, advanced
     duration_weeks = Column(Integer)
     
-    # Content
-    program_data = Column(JSON)  # Detailed program structure
-    thumbnail_url = Column(String)
+    # Content (JSON as Text for SQLite)
+    program_data = Column(Text)  # JSON string
+    thumbnail_url = Column(String(500))
     
     # Metadata
-    created_by = Column(String)  # admin, trainer name
+    created_by = Column(String(100))  # admin, trainer name
     created_at = Column(DateTime, default=datetime.utcnow)
     is_premium = Column(Boolean, default=False)
     

@@ -1,3 +1,4 @@
+# app/api/v1/auth.py
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -8,20 +9,16 @@ from typing import Optional
 import bcrypt
 import jwt
 
-
-from app.db.database import get_db
 from app.models.models import User
-from app.schemas.auth import UserCreate, UserResponse, Token
-
 
 # OAuth2 설정
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# 라우터 생성 - 이 부분이 중요!
+# 라우터 생성
 router = APIRouter()
 
 # JWT 설정
-SECRET_KEY = "your-secret-key-here"  # 실제로는 환경변수에서 가져와야 함
+SECRET_KEY = "your-secret-key-here"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -45,38 +42,44 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def get_current_user_id() -> int:
-    """현재 사용자 ID 반환 (테스트용 - 실제로는 JWT에서 추출)"""
-    return 1  # 테스트용 고정값
+    """현재 사용자 ID 반환 (테스트용)"""
+    return 1
 
 # Pydantic 모델들
 class UserCreate(BaseModel):
     email: str
     password: str
     name: str
-    birth_date: date  # 자동으로 문자열을 date로 변환
+    birth_date: date
     gender: Optional[str] = None
     height: Optional[int] = None
     weight: Optional[float] = None
+    subscription_tier: Optional[str] = "FREE"
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+# 수정된 UserResponse 모델 - 모든 필드를 Optional로 만들고 기본값 제공
 class UserResponse(BaseModel):
     id: int
     email: str
     name: str
-    birth_date: date
-    gender: str
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
     height: Optional[int] = None
     weight: Optional[float] = None
-    subscription_tier: str
-    is_active: bool
-    created_at: datetime  # 이 필드 추가
-    updated_at: Optional[datetime] = None  # 선택적으로 추가
+    subscription_tier: str = "FREE"
+    is_active: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 @router.post("/register", response_model=UserResponse)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -100,19 +103,29 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
             gender=user.gender,
             height=user.height,
             weight=user.weight,
+            subscription_tier=user.subscription_tier or "FREE",
             is_active=True,
-            is_verified=False
+            is_verified=False,
+            created_at=datetime.utcnow()
         )
         
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
         
+        # 응답 데이터 생성 - 모든 필드 명시적으로 포함
         return UserResponse(
             id=db_user.id,
             email=db_user.email,
             name=db_user.name,
-            is_active=db_user.is_active
+            birth_date=db_user.birth_date,
+            gender=db_user.gender,
+            height=db_user.height,
+            weight=db_user.weight,
+            subscription_tier=getattr(db_user, 'subscription_tier', 'FREE'),
+            is_active=db_user.is_active,
+            created_at=db_user.created_at,
+            updated_at=getattr(db_user, 'updated_at', None)
         )
         
     except HTTPException:
@@ -165,5 +178,12 @@ async def get_current_user(current_user_id: int = Depends(get_current_user_id), 
         id=user.id,
         email=user.email,
         name=user.name,
-        is_active=user.is_active
+        birth_date=user.birth_date,
+        gender=user.gender,
+        height=user.height,
+        weight=user.weight,
+        subscription_tier=getattr(user, 'subscription_tier', 'FREE'),
+        is_active=user.is_active,
+        created_at=user.created_at,
+        updated_at=getattr(user, 'updated_at', None)
     )

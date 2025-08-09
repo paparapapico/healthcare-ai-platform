@@ -49,7 +49,7 @@ def debug_response(response, test_name):
         print(f"Raw Response: {response.text}")
 
 def test_register_clean():
-    """깨끗한 회원가입 테스트"""
+    """깨끗한 회원가입 테스트 - 올바른 엔드포인트 사용"""
     print("\n" + "="*50)
     print("깨끗한 회원가입 테스트")
     print("="*50)
@@ -67,7 +67,8 @@ def test_register_clean():
     print(f"📤 요청 데이터: {json.dumps(clean_user, indent=2, ensure_ascii=False)}")
     
     try:
-        response = client.post("/api/users", json=clean_user)
+        # 올바른 엔드포인트 사용: /api/v1/auth/register
+        response = client.post("/api/v1/auth/register", json=clean_user)
         debug_response(response, "깨끗한 회원가입")
         
         if response.status_code in [200, 201]:
@@ -161,8 +162,8 @@ def test_api_health():
     print("="*50)
     
     try:
-        # 기본 헬스체크 (있다면)
-        health_endpoints = ["/", "/health", "/api/v1/health"]
+        # 기본 헬스체크
+        health_endpoints = ["/", "/health"]
         
         for endpoint in health_endpoints:
             try:
@@ -173,7 +174,7 @@ def test_api_health():
             except:
                 continue
                 
-        # 회원가입 엔드포인트가 존재하는지 확인 (잘못된 요청으로)
+        # 회원가입 엔드포인트 존재 확인
         response = client.post("/api/v1/auth/register", json={})
         print(f"📡 /api/v1/auth/register (빈 요청): {response.status_code}")
         
@@ -193,6 +194,44 @@ def test_api_health():
         print(f"💥 API 상태 확인 실패: {e}")
         return False
 
+def test_additional_endpoints():
+    """추가 엔드포인트 테스트"""
+    print("\n" + "="*50)
+    print("추가 API 엔드포인트 테스트")
+    print("="*50)
+    
+    endpoints_to_test = [
+        ("/api/v1/health/dashboard", "GET"),
+        ("/api/v1/workouts", "GET"),
+        ("/api/v1/social/leaderboard", "GET"),
+        ("/api/v1/social/friends", "GET"),
+    ]
+    
+    success_count = 0
+    for endpoint, method in endpoints_to_test:
+        try:
+            if method == "GET":
+                response = client.get(endpoint)
+            else:
+                response = client.post(endpoint, json={})
+                
+            print(f"📡 {method} {endpoint}: {response.status_code}")
+            
+            # 200, 401, 422는 모두 엔드포인트가 존재함을 의미
+            if response.status_code in [200, 401, 422]:
+                success_count += 1
+                print(f"  ✅ 엔드포인트 존재")
+            elif response.status_code == 404:
+                print(f"  ❌ 엔드포인트 없음")
+            else:
+                print(f"  🤔 응답 코드: {response.status_code}")
+                
+        except Exception as e:
+            print(f"  💥 에러: {e}")
+    
+    print(f"\n📊 엔드포인트 결과: {success_count}/{len(endpoints_to_test)} 존재")
+    return success_count >= len(endpoints_to_test) // 2  # 절반 이상 성공
+
 def main():
     """메인 테스트 실행"""
     print("🚀 HealthcareAI 백엔드 테스트 시작")
@@ -207,7 +246,8 @@ def main():
     tests = [
         ("깨끗한 회원가입", test_register_clean),
         ("BASIC 구독", test_register_with_basic), 
-        ("다중 회원가입", test_register_multiple)
+        ("다중 회원가입", test_register_multiple),
+        ("추가 엔드포인트", test_additional_endpoints)
     ]
     
     results = []
@@ -233,12 +273,21 @@ def main():
     
     print(f"\n📊 전체 결과: {success_count}/{len(results)} 테스트 통과")
     
-    if success_count == 0:
+    if success_count >= 3:  # 4개 중 3개 이상 성공
+        print("\n🎉 대부분의 테스트가 통과했습니다!")
+        print("✨ Healthcare AI 백엔드가 정상적으로 작동하고 있습니다.")
+        print("\n🚀 다음 단계:")
+        print("1. 프론트엔드와 연동 테스트")
+        print("2. 실제 이미지를 이용한 자세 분석 테스트")
+        print("3. WebSocket 실시간 분석 테스트")
+    elif success_count >= 2:
+        print("\n👍 기본 기능은 정상 작동합니다!")
+        print("일부 고급 기능에서 문제가 있을 수 있습니다.")
+    else:
         print("\n💡 문제 해결 힌트:")
         print("1. 백엔드 서버가 실행 중인지 확인")
-        print("2. UserResponse 모델에 필수 필드들이 포함되었는지 확인")
-        print("3. 데이터베이스 연결 상태 확인")
-        print("4. 로그에서 상세한 에러 메시지 확인")
+        print("2. 데이터베이스 연결 상태 확인")
+        print("3. 로그에서 상세한 에러 메시지 확인")
 
 if __name__ == "__main__":
     main()

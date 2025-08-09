@@ -1,3 +1,9 @@
+# app/main.py 상단에 추가
+from app.core.monitoring import metrics_endpoint, MetricsCollector, track_request_metrics
+from app.core.error_tracking import initialize_sentry
+from fastapi import Request
+import time
+
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -9,6 +15,7 @@ import numpy as np
 import json
 from datetime import datetime, date
 import base64
+from app.db.database import get_db
 
 from app.api.v1.auth import router as auth_router
 from app.api.v1.health import router as health_router
@@ -69,7 +76,26 @@ async def shutdown_event():
     from app.services.notifications.scheduler import scheduler
     scheduler.shutdown()
 
+# Sentry 초기화
+initialize_sentry(environment=os.getenv("ENVIRONMENT", "development"))
 
+# Prometheus 메트릭 엔드포인트 추가
+@app.get("/metrics")
+async def get_metrics():
+    return await metrics_endpoint()
+
+# 미들웨어 추가 - 요청 추적
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    
+    # 메트릭 수집
+    MetricsCollector.collect_system_metrics()
+    
+    return response
 
 # CORS 설정
 app.add_middleware(
@@ -191,7 +217,7 @@ async def register_user(user_data: UserCreate):
             "is_active": user_record["is_active"]
         }
         
-        return UserResponseAuth(**response_data)
+        return UserResponse(**response_data)
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")

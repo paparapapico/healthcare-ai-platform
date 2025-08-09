@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 데이터베이스 URL 가져오기
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = "postgresql://healthcare_user:healthcare123@localhost:5432/healthcare_db"
 
 if not DATABASE_URL:
     # .env 파일이 없거나 DATABASE_URL이 설정되지 않은 경우 기본값 사용
