@@ -32,7 +32,7 @@ export const SettingsPage: React.FC = () => {
     toast.success('Settings saved successfully!');
   };
 
-  const handleSettingChange = (section: string, key: string, value: any) => {
+  const handleSettingChange = (section: string, key: string, value: unknown) => {
     setSettings(prev => ({
       ...prev,
       [section]: {

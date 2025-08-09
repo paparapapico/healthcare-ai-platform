@@ -11,7 +11,7 @@ import {
   getFilteredRowModel,
 } from '@tanstack/react-table';
 import { usersAPI } from '@/lib/api';
-import { User } from '@/types';
+import type { User } from '@/types';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 

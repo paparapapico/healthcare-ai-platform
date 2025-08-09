@@ -1,5 +1,6 @@
 // 파일: ~/HealthcareAI/frontend/src/lib/payment.ts
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Stripe } from '@stripe/stripe-js';
 
 let stripePromise: Promise<Stripe | null>;
 

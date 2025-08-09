@@ -1,8 +1,8 @@
 // 파일: ~/HealthcareAI/frontend/src/pages/admin/Dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // useState, useEffect 제거
 import { useQuery } from '@tanstack/react-query';
-import { StatsCard } from '@/components/Dashboard/StatsCard';
-import { RealtimeChart } from '@/components/Dashboard/RealtimeChart';
+import { StatsCard } from '@/components/Layout/Dashboard/StatsCard';
+import { RealtimeChart } from '@/components/Layout/Dashboard/RealtimeChart';
 import { dashboardAPI } from '@/lib/api';
 import {
   UsersIcon,
@@ -21,7 +21,10 @@ export const AdminDashboard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div 
+          className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" 
+          data-testid="loading-spinner"
+        ></div>
       </div>
     );
   }

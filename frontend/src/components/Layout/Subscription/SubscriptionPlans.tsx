@@ -1,6 +1,6 @@
 // 파일: ~/HealthcareAI/frontend/src/components/Subscription/SubscriptionPlans.tsx
 import React, { useState } from 'react';
-import { PaymentForm } from '@/components/Payment/PaymentForm';
+import { PaymentForm } from '@/components/Layout/Payment/PaymentForm';
 import { CheckIcon } from '@heroicons/react/24/outline';
 
 interface Plan {

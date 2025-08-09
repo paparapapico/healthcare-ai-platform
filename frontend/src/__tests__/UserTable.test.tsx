@@ -1,11 +1,14 @@
 // 파일: ~/HealthcareAI/frontend/src/__tests__/UserTable.test.tsx
+import { describe, it, expect, beforeEach, vi, type MockedFunction } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { UserTable } from '@/components/Users/UserTable';
+import { UserTable } from '@/components/Layout/Users/UserTable';
 import { usersAPI } from '@/lib/api';
 
-jest.mock('@/lib/api');
-const mockUsersAPI = usersAPI as jest.Mocked<typeof usersAPI>;
+vi.mock('@/lib/api');
+const mockUsersAPI = usersAPI as typeof usersAPI & {
+  getUsers: MockedFunction<typeof usersAPI.getUsers>;
+};
 
 const mockUsers = [
   {
@@ -28,7 +31,10 @@ const mockUsers = [
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
+    defaultOptions: { 
+      queries: { retry: false },
+      mutations: { retry: false }
+    },
   });
   
   return ({ children }: { children: React.ReactNode }) => (
@@ -40,6 +46,7 @@ const createWrapper = () => {
 
 describe('UserTable', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     mockUsersAPI.getUsers.mockResolvedValue(mockUsers);
   });
 
@@ -66,5 +73,14 @@ describe('UserTable', () => {
       expect(screen.getByText('Admin User')).toBeInTheDocument();
       expect(screen.queryByText('John Doe')).not.toBeInTheDocument();
     });
+  });
+
+  it('shows loading spinner initially', () => {
+    mockUsersAPI.getUsers.mockImplementation(
+      () => new Promise(resolve => setTimeout(() => resolve(mockUsers), 1000))
+    );
+    
+    render(<UserTable />, { wrapper: createWrapper() });
+    expect(document.querySelector('.animate-spin')).toBeInTheDocument();
   });
 });

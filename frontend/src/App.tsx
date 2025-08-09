@@ -1,5 +1,4 @@
 // 파일: ~/HealthcareAI/frontend/src/App.tsx
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
@@ -10,7 +9,7 @@ import { UserDetailPage } from '@/pages/admin/UserDetail';
 import { AnalyticsPage } from '@/pages/admin/Analytics';
 import { ChallengesPage } from '@/pages/admin/Challenges';
 import { SettingsPage } from '@/pages/admin/Settings';
-import { LoginPage } from '@/pages/auth/Login';
+import { LoginPage } from '@/pages/admin/auth/Login';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import './main.css';
 
@@ -72,55 +71,3 @@ function App() {
 }
 
 export default App;
-
-// 파일: ~/HealthcareAI/frontend/src/components/auth/ProtectedRoute.tsx
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { authAPI } from '@/lib/api';
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('access_token');
-      
-      if (!token) {
-        setIsAuthenticated(false);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        await authAPI.getCurrentUser();
-        setIsAuthenticated(true);
-      } catch (error) {
-        localStorage.removeItem('access_token');
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};

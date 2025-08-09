@@ -1,7 +1,7 @@
 // 파일: ~/HealthcareAI/frontend/src/pages/admin/Billing.tsx
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { SubscriptionPlans } from '@/components/Subscription/SubscriptionPlans';
+import { SubscriptionPlans } from '@/components/Layout/Subscription/SubscriptionPlans';
 import { paymentAPI } from '@/lib/payment';
 
 export const BillingPage: React.FC = () => {

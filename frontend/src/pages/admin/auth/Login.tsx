@@ -33,7 +33,8 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('access_token', response.access_token);
       setIsAuthenticated(true);
       toast.success('Login successful!');
-    } catch (error) {
+    } catch {
+      // error 변수 제거
       toast.error('Invalid credentials');
     } finally {
       setIsLoading(false);

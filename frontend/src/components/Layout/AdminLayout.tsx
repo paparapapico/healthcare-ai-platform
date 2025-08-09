@@ -1,13 +1,12 @@
-// 파일: ~/HealthcareAI/frontend/src/components/Layout/AdminLayout.tsx
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   HomeIcon,
   UsersIcon,
   ChartBarIcon,
   CogIcon,
   BellIcon,
-  LogoutIcon,
+  PowerIcon,
 } from '@heroicons/react/24/outline';
 import { authAPI } from '@/lib/api';
 
@@ -21,10 +20,17 @@ const navigation = [
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    authAPI.logout();
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // 에러가 발생해도 로그인 페이지로 이동
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
@@ -40,7 +46,8 @@ export const AdminLayout: React.FC = () => {
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = location.pathname === item.href || 
+                             (item.href === '/admin' && location.pathname === '/admin/');
               return (
                 <Link
                   key={item.name}
@@ -62,9 +69,9 @@ export const AdminLayout: React.FC = () => {
           <div className="p-4 border-t">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900"
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
             >
-              <LogoutIcon className="w-5 h-5 mr-3" />
+              <PowerIcon className="w-5 h-5 mr-3" />
               Logout
             </button>
           </div>
@@ -73,7 +80,7 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main content */}
       <div className="flex-1 ml-64">
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-auto">
           <Outlet />
         </main>
       </div>

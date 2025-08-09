@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { challengesAPI } from '@/lib/api';
-import { Challenge } from '@/types';
+import type { Challenge } from '@/types';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
@@ -10,7 +10,7 @@ export const ChallengesPage: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: challenges = [], isLoading } = useQuery({
+  const { data: challenges = [], isLoading } = useQuery<Challenge[]>({
     queryKey: ['challenges'],
     queryFn: challengesAPI.getChallenges,
   });
@@ -68,7 +68,7 @@ export const ChallengesPage: React.FC = () => {
 
       {/* Challenges Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {challenges.map((challenge) => (
+        {challenges.map((challenge: Challenge) => (
           <div key={challenge.id} className="card p-6">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-semibold text-gray-900">{challenge.title}</h3>

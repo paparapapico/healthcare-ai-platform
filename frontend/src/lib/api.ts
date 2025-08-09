@@ -1,8 +1,8 @@
 // 파일: ~/HealthcareAI/frontend/src/lib/api.ts
 import axios from 'axios';
-import { User, WorkoutSession, HealthData, Challenge, DashboardStats } from '@/types';
+import type { User, WorkoutSession, HealthData, Challenge, DashboardStats } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8000/api/v1'
 
 // Axios 인스턴스 생성
 export const api = axios.create({
@@ -40,14 +40,14 @@ export const authAPI = {
     formData.append('username', email);
     formData.append('password', password);
     
-    const response = await api.post('/api/auth/login', formData, {
+    const response = await api.post('/auth/login', formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
     return response.data;
   },
   
   getCurrentUser: async (): Promise<User> => {
-    const response = await api.get('/api/auth/me');
+    const response = await api.get('/auth/me');  // /api/ 제거
     return response.data;
   },
   
@@ -56,25 +56,37 @@ export const authAPI = {
   }
 };
 
-// Users API
+// Users API 수정
 export const usersAPI = {
-  getUsers: async (skip = 0, limit = 100): Promise<User[]> => {
-    const response = await api.get(`/api/users/?skip=${skip}&limit=${limit}`);
+  // 현재 사용자만 가져오기 (목록 대신)
+  getCurrentUser: async (): Promise<User> => {
+    const response = await api.get('/auth/me');
     return response.data;
   },
   
   getUserById: async (userId: string): Promise<User> => {
-    const response = await api.get(`/api/users/${userId}`);
+    const response = await api.get(`/users/${userId}`);
     return response.data;
   },
   
+  // 사용자 목록은 임시로 현재 사용자만 반환
+  getUsers: async (skip = 0, limit = 100): Promise<User[]> => {
+    try {
+      const currentUser = await api.get('/auth/me');
+      return [currentUser.data]; // 배열로 감싸서 반환
+    } catch (error) {
+      console.error('Failed to get users:', error);
+      return [];
+    }
+  },
+  
   updateUser: async (userId: string, userData: Partial<User>): Promise<User> => {
-    const response = await api.put(`/api/users/${userId}`, userData);
+    const response = await api.put(`/users/${userId}`, userData);
     return response.data;
   },
   
   deleteUser: async (userId: string): Promise<void> => {
-    await api.delete(`/api/users/${userId}`);
+    await api.delete(`/users/${userId}`);
   }
 };
 
