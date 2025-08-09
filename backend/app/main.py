@@ -1,4 +1,5 @@
 # app/main.py 상단에 추가
+import os
 from app.core.monitoring import metrics_endpoint, MetricsCollector, track_request_metrics
 from app.core.error_tracking import initialize_sentry
 from fastapi import Request
