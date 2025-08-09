@@ -14,7 +14,7 @@ Base = declarative_base()
 # Enums
 # ========================
 
-class GenderEnum(str, enum.Enum):
+class GenderEnum(str, Enum):
     MALE = "male"
     FEMALE = "female"
     OTHER = "other"
@@ -41,13 +41,13 @@ class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, index=True)
     hashed_password = Column(String, nullable=False)
     
     # Profile
     name = Column(String, nullable=False)
     birth_date = Column(Date)
-    gender = Column(Enum(GenderEnum))
+    gender = Column(String(10))  # Enum 대신 일반 문자열 사용
     height = Column(Float)  # cm
     weight = Column(Float)  # kg
     profile_image = Column(String)
@@ -71,7 +71,9 @@ class User(Base):
     health_metrics = relationship("HealthMetric", back_populates="user", cascade="all, delete-orphan")
     goals = relationship("Goal", back_populates="user", cascade="all, delete-orphan")
     achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
-
+     # ... 다른 필드들
+    created_at = Column(DateTime, default=datetime.utcnow)  # 이 필드가 있어야 함
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 # ========================
 # Workout Models
 # ========================

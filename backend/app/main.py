@@ -1,19 +1,75 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from app.api.v1 import auth, health, workouts, social, notifications
 from typing import Optional, List
 import cv2
 import mediapipe as mp
 import numpy as np
 import json
-from datetime import datetime
+from datetime import datetime, date
 import base64
+
+from app.api.v1.auth import router as auth_router
+from app.api.v1.health import router as health_router
+from app.api.v1.workouts import router as workout_router
+from app.api.v1.social import router as social_router
 
 app = FastAPI(
     title="Healthcare AI Platform",
     description="AI 기반 헬스케어 자세 분석 플랫폼",
     version="1.0.0"
 )
+
+import logging  # 이 라인을 추가!
+
+# Logger 설정 추가
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# app/main.py에 추가
+from app.api.v1.social import router as social_router
+app.include_router(social_router)
+# app/main.py에 추가
+from app.api.v1.health import router as health_router
+app.include_router(health_router)
+# app/main.py 상단에 추가
+from app.api.v1.notifications import router as notifications_router
+from app.services.notifications.scheduler import init_scheduler
+from app.core.cache import cache_manager
+from app.db.optimizations import initialize_optimizations
+
+# 라우터 추가
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(health.router, prefix="/api/v1/health", tags=["health"])
+app.include_router(workouts.router, prefix="/api/v1/workouts", tags=["workouts"])
+app.include_router(social.router, prefix="/api/v1/social", tags=["social"])
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+
+# 앱 시작 이벤트에 추가
+@app.on_event("startup")
+async def startup_event():
+    """앱 시작 시 실행"""
+    # 데이터베이스 최적화
+    initialize_optimizations()
+    
+    # 알림 스케줄러 시작
+    init_scheduler()
+    
+    # Redis 연결 확인
+    if cache_manager.redis_client:
+        logger.info("Redis cache connected")
+    else:
+        logger.warning("Redis cache not available")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """앱 종료 시 실행"""
+    # 스케줄러 종료
+    from app.services.notifications.scheduler import scheduler
+    scheduler.shutdown()
+
+
 
 # CORS 설정
 app.add_middleware(
@@ -63,18 +119,24 @@ class ExerciseRecommendation(BaseModel):
 
 # 사용자 관리
 class UserCreate(BaseModel):
-    name: str = Field(..., min_length=1, max_length=100)
-    email: str = Field(..., pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-    age: int = Field(..., ge=1, le=120)
-    gender: str = Field(..., pattern="^(male|female|other)$")
+    email: str
+    password: str
+    name: str
+    birth_date: str  # "1990-01-01" 형태
+    gender: str
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    subscription_tier: Optional[str] = "FREE"
 
 class UserResponse(BaseModel):
-    id: str
-    name: str
+    id: int
     email: str
-    age: int
-    gender: str
-    created_at: datetime
+    name: str
+    birth_date: Optional[str] = None
+    gender: Optional[str] = None
+    subscription_tier: str = "FREE"
+    created_at: Optional[datetime] = None
+    is_active: bool = True
 
 # 임시 데이터 저장소
 users_db = {}
@@ -95,19 +157,44 @@ async def health_check():
     return {"status": "healthy", "timestamp": datetime.now()}
 
 # 사용자 관리 API
-@app.post("/api/users", response_model=UserResponse)
-async def create_user(user: UserCreate):
-    user_id = f"user_{len(users_db) + 1}"
-    user_data = {
-        "id": user_id,
-        "name": user.name,
-        "email": user.email,
-        "age": user.age,
-        "gender": user.gender,
-        "created_at": datetime.now()
-    }
-    users_db[user_id] = user_data
-    return UserResponse(**user_data)
+@app.post("/api/v1/auth/register", response_model=UserResponse)
+async def register_user(user_data: UserCreate):
+    """회원가입 API"""
+    try:
+        # 기존 users_db에 저장 (기존 로직과 동일)
+        user_id = len(users_db) + 1
+        
+        user_record = {
+            "id": user_id,
+            "email": user_data.email,
+            "name": user_data.name,
+            "birth_date": user_data.birth_date,
+            "gender": user_data.gender,
+            "height": user_data.height,
+            "weight": user_data.weight,
+            "subscription_tier": user_data.subscription_tier or "FREE",
+            "created_at": datetime.now(),
+            "is_active": True
+        }
+        
+        users_db[f"user_{user_id}"] = user_record
+        
+        # 응답 데이터 생성 (모든 필드 포함)
+        response_data = {
+            "id": user_record["id"],
+            "email": user_record["email"], 
+            "name": user_record["name"],
+            "birth_date": user_record["birth_date"],
+            "gender": user_record["gender"],
+            "subscription_tier": user_record["subscription_tier"],
+            "created_at": user_record["created_at"],
+            "is_active": user_record["is_active"]
+        }
+        
+        return UserResponseAuth(**response_data)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
 
 @app.get("/api/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: str):
