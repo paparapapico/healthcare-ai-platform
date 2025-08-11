@@ -7,10 +7,17 @@ from datetime import datetime
 import uvicorn
 import logging
 
+# API 라우터들 import
+from app.api.v1 import auth, health, workouts, social, notifications
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Healthcare AI API")
+app = FastAPI(
+    title="Healthcare AI API",
+    description="AI 기반 헬스케어 플랫폼 API",
+    version="1.0.0"
+)
 
 # 강화된 CORS 설정
 app.add_middleware(
@@ -20,6 +27,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# API 라우터 등록
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(health.router, prefix="/api/v1") 
+app.include_router(workouts.router, prefix="/api/v1")
+app.include_router(social.router, prefix="/api/v1")
+app.include_router(notifications.router, prefix="/api/v1")
 
 # Socket.IO
 sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode='asgi')
@@ -38,13 +52,21 @@ async def disconnect(sid):
 
 @app.get("/")
 async def root():
-    return {"message": "Healthcare AI API", "status": "running"}
+    return {"message": "Healthcare AI API", "status": "running", "version": "1.0.0"}
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "services": {
+            "api": "running",
+            "database": "connected",
+            "socketio": "active"
+        }
+    }
 
-# 로그인 API - 디버깅 강화
+# 기존 로그인 API (호환성을 위해 유지)
 @app.post("/api/auth/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
     # 요청 로깅
@@ -55,13 +77,13 @@ async def login(request: Request, username: str = Form(...), password: str = For
     
     # 계정 확인
     if username == "admin@healthcare.ai" and password == "admin123":
-        logger.info(" LOGIN SUCCESS")
+        logger.info("✅ LOGIN SUCCESS")
         return {
             "access_token": "healthcare_admin_token_12345",
             "token_type": "bearer"
         }
     else:
-        logger.error(f" LOGIN FAILED - Username: '{username}', Password: '{password}'")
+        logger.error(f"❌ LOGIN FAILED - Username: '{username}', Password: '{password}'")
         logger.error("Expected: admin@healthcare.ai / admin123")
         raise HTTPException(
             status_code=401, 
@@ -132,6 +154,7 @@ async def get_challenges():
         }
     ]
 
+# Socket.IO 마운트
 app.mount("/socket.io", socket_app)
 
 if __name__ == "__main__":

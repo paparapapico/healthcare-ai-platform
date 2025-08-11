@@ -23,7 +23,7 @@ import {
   CheckCircle,
   Star,
   Diamond,
-  Crown,
+  EmojiEvents,
   Cancel,
   Payment,
 } from '@mui/icons-material';
@@ -39,13 +39,13 @@ const PlanCard: React.FC<{
   isLoading: boolean;
 }> = ({ plan, isCurrentPlan, onSubscribe, isLoading }) => {
   const getIcon = () => {
-    switch (plan.name) {
-      case 'Basic': return <Star color="primary" />;
-      case 'Premium': return <Diamond color="secondary" />;
-      case 'Pro': return <Crown sx={{ color: 'gold' }} />;
-      default: return <CheckCircle />;
-    }
-  };
+  switch (plan.name) {
+    case 'Basic': return <Star color="primary" />;
+    case 'Premium': return <Diamond color="secondary" />;
+    case 'Pro': return <EmojiEvents sx={{ color: 'gold' }} />; // Crown 대신 EmojiEvents 사용
+    default: return <CheckCircle />;
+  }
+};
 
   const getColor = () => {
     switch (plan.name) {

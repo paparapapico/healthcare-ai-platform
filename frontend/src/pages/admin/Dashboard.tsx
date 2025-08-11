@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { dashboardAPI } from '@/lib/api';
 
+
 export const AdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-stats'],

@@ -1,11 +1,16 @@
-from fastapi.testclient import TestClient
+
 from app.main import app
 from datetime import datetime, date
 import pytest
 import time
 import random
 import json
+try:
+    from fastapi.testclient import TestClient
+except ImportError:
+    from starlette.testclient import TestClient
 
+client = TestClient(app)
 
 client = TestClient(app)
 
