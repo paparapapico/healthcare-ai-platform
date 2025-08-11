@@ -1,43 +1,26 @@
-# FastAPI and Server
+# 파일: HealthcareAI/backend/requirements.txt (Socket.IO 의존성 추가)
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-python-multipart==0.0.6
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-python-dotenv==1.0.0
-
-# Database
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
 alembic==1.12.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+python-socketio==5.9.0  # 추가
 redis==5.0.1
-
-# AI/ML
-mediapipe==0.10.8
-opencv-python-headless==4.8.1.78
-numpy==1.24.3
-pillow==10.1.0
-tensorflow==2.15.0
-
-# Task Queue & Scheduling
 celery==5.3.4
-apscheduler==3.10.4
-
-# WebSocket
-websockets==12.0
-
-# Monitoring
-prometheus-client==0.19.0
-sentry-sdk[fastapi]==1.38.0
-
-# Testing
 pytest==7.4.3
 pytest-asyncio==0.21.1
 httpx==0.25.2
-
-# Firebase (for push notifications)
-firebase-admin==6.3.0
-
-# Utils
-pydantic==2.5.2
-requests==2.31.0
+Pillow==10.0.1
+opencv-python==4.8.1.78
+mediapipe==0.10.7
+tensorflow==2.13.0
+prometheus-client==0.19.0
+structlog==23.2.0
+sentry-sdk[fastapi]==1.38.0
+pydantic-settings==2.0.3
+firebase-admin==6.2.0
+stripe==7.8.0
+locust==2.17.0

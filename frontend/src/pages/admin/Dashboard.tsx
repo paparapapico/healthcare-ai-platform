@@ -1,95 +1,213 @@
-// 파일: ~/HealthcareAI/frontend/src/pages/admin/Dashboard.tsx
-import React from 'react'; // useState, useEffect 제거
+﻿import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { StatsCard } from '@/components/Layout/Dashboard/StatsCard';
-import { RealtimeChart } from '@/components/Layout/Dashboard/RealtimeChart';
 import { dashboardAPI } from '@/lib/api';
-import {
-  UsersIcon,
-  ChartBarIcon,
-  ClockIcon,
-  FireIcon,
-} from '@heroicons/react/24/outline';
 
 export const AdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: dashboardAPI.getStats,
-    refetchInterval: 30000, // 30초마다 새로고침
   });
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div 
-          className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" 
-          data-testid="loading-spinner"
-        ></div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '300px'
+      }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          border: '4px solid #e5e7eb',
+          borderTop: '4px solid #2563eb',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Healthcare AI Platform Overview</p>
+    <div style={{ maxWidth: '1200px' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{
+          fontSize: '28px',
+          fontWeight: 'bold',
+          color: '#111827',
+          marginBottom: '8px'
+        }}>
+          Dashboard
+        </h1>
+        <p style={{ color: '#6b7280' }}>
+          Healthcare AI Platform Overview
+        </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total Users"
-          value={stats?.total_users || 0}
-          icon={<UsersIcon />}
-          color="blue"
-        />
-        <StatsCard
-          title="Active Today"
-          value={stats?.active_users_today || 0}
-          icon={<ChartBarIcon />}
-          color="green"
-        />
-        <StatsCard
-          title="Total Workouts"
-          value={stats?.total_workouts || 0}
-          icon={<FireIcon />}
-          color="yellow"
-        />
-        <StatsCard
-          title="Avg Session"
-          value={`${Math.round(stats?.avg_session_duration || 0)}m`}
-          icon={<ClockIcon />}
-          color="red"
-        />
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '24px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>
+                Total Users
+              </p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+                {stats?.total_users || 0}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: '#2563eb',
+              padding: '12px',
+              borderRadius: '50%',
+              fontSize: '20px'
+            }}>
+              
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '24px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>
+                Active Today
+              </p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+                {stats?.active_users_today || 0}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: '#10b981',
+              padding: '12px',
+              borderRadius: '50%',
+              fontSize: '20px'
+            }}>
+              
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '24px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>
+                Total Workouts
+              </p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+                {stats?.total_workouts || 0}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: '#f59e0b',
+              padding: '12px',
+              borderRadius: '50%',
+              fontSize: '20px'
+            }}>
+              
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '24px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>
+                Avg Session
+              </p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+                {Math.round(stats?.avg_session_duration || 0)}m
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: '#ef4444',
+              padding: '12px',
+              borderRadius: '50%',
+              fontSize: '20px'
+            }}>
+              
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RealtimeChart />
-        
-        {/* Top Exercises */}
-        <div className="card p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Popular Exercises
-          </h3>
-          <div className="space-y-3">
-            {stats?.top_exercises?.map((exercise, index) => (
-              <div key={exercise.exercise_type} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <span className="text-sm font-medium text-gray-600 w-8">
-                    #{index + 1}
-                  </span>
-                  <span className="text-sm font-medium text-gray-900 capitalize">
-                    {exercise.exercise_type.replace('_', ' ')}
-                  </span>
-                </div>
-                <span className="text-sm text-gray-500">
-                  {exercise.count} sessions
+      {/* Popular Exercises */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '24px',
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h3 style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: '#111827',
+          marginBottom: '16px'
+        }}>
+          Popular Exercises
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {stats?.top_exercises?.map((exercise, index) => (
+            <div key={exercise.exercise_type} style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 0',
+              borderBottom: index < stats.top_exercises.length - 1 ? '1px solid #f3f4f6' : 'none'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#6b7280',
+                  width: '32px'
+                }}>
+                  #{index + 1}
+                </span>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#111827',
+                  textTransform: 'capitalize'
+                }}>
+                  {exercise.exercise_type.replace('_', ' ')}
                 </span>
               </div>
-            ))}
-          </div>
+              <span style={{ fontSize: '14px', color: '#6b7280' }}>
+                {exercise.count} sessions
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

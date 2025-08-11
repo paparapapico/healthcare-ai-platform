@@ -1,86 +1,152 @@
-import React from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  HomeIcon,
-  UsersIcon,
-  ChartBarIcon,
-  CogIcon,
-  BellIcon,
-  PowerIcon,
-} from '@heroicons/react/24/outline';
-import { authAPI } from '@/lib/api';
+﻿import React from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+// # import 추가:
+import { Payment } from '@mui/icons-material';
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: HomeIcon },
-  { name: 'Users', href: '/admin/users', icon: UsersIcon },
-  { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },
-  { name: 'Challenges', href: '/admin/challenges', icon: BellIcon },
-  { name: 'Settings', href: '/admin/settings', icon: CogIcon },
+  { name: 'Dashboard', href: '/admin', icon: '' },
+  { name: 'Users', href: '/admin/users', icon: '' },
+  { name: 'Analytics', href: '/admin/analytics', icon: '' },
+  { name: 'Challenges', href: '/admin/challenges', icon: '' },
+  { name: 'Settings', href: '/admin/settings', icon: '' },
 ];
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await authAPI.logout();
-      navigate('/login', { replace: true });
-    } catch (error) {
-      console.error('Logout failed:', error);
-      // 에러가 발생해도 로그인 페이지로 이동
-      navigate('/login', { replace: true });
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    window.location.href = '/login';
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div style={{
+      display: 'flex',
+      height: '100vh',
+      backgroundColor: '#f3f4f6'
+    }}>
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center justify-center h-16 bg-primary-600">
-            <h1 className="text-xl font-bold text-white">HealthcareAI</h1>
-          </div>
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '256px',
+        height: '100vh',
+        backgroundColor: 'white',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        zIndex: 50,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {/* Logo */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '64px',
+          backgroundColor: '#2563eb',
+          color: 'white'
+        }}>
+          <h1 style={{
+            fontSize: '20px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>
+            HealthcareAI
+          </h1>
+        </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href || 
-                             (item.href === '/admin' && location.pathname === '/admin/');
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive
-                      ? 'bg-primary-100 text-primary-600'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <item.icon className="w-5 h-5 mr-3" />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
+        {/* Navigation */}
+        <nav style={{
+          flex: 1,
+          padding: '24px 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}>
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  backgroundColor: isActive ? '#dbeafe' : 'transparent',
+                  color: isActive ? '#2563eb' : '#4b5563',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <span style={{ marginRight: '12px', fontSize: '16px' }}>
+                  {item.icon}
+                </span>
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
 
-          {/* Logout */}
-          <div className="p-4 border-t">
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              <PowerIcon className="w-5 h-5 mr-3" />
-              Logout
-            </button>
-          </div>
+        {/* Logout */}
+        <div style={{
+          padding: '16px',
+          borderTop: '1px solid #e5e7eb'
+        }}>
+          <button
+            onClick={handleLogout}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              padding: '8px 12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#4b5563',
+              backgroundColor: 'transparent',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            <span style={{ marginRight: '12px' }}></span>
+            Logout
+          </button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 ml-64">
-        <main className="flex-1 p-6 overflow-auto">
+      <div style={{
+        flex: 1,
+        marginLeft: '256px',
+        minHeight: '100vh'
+      }}>
+        <main style={{
+          padding: '24px',
+          maxWidth: '100%',
+          overflowX: 'auto'
+        }}>
           <Outlet />
         </main>
       </div>

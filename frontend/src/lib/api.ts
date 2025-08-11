@@ -1,37 +1,55 @@
-// 파일: ~/HealthcareAI/frontend/src/lib/api.ts
-import axios from 'axios';
-import type { User, WorkoutSession, HealthData, Challenge, DashboardStats } from '@/types';
+﻿// 타입 정의
+interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  is_active: boolean;
+  is_superuser: boolean;
+  created_at: string;
+}
 
-const API_BASE_URL = 'http://localhost:8000/api/v1'
+interface DashboardStats {
+  total_users: number;
+  active_users_today: number;
+  total_workouts: number;
+  total_challenges: number;
+  avg_session_duration: number;
+  top_exercises: Array<{
+    exercise_type: string;
+    count: number;
+  }>;
+}
 
-// Axios 인스턴스 생성
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+interface WorkoutSession {
+  id: string;
+  user_id: string;
+  exercise_type: string;
+  duration: number;
+  calories_burned: number;
+  pose_accuracy: number;
+  created_at: string;
+}
 
-// 토큰 인터셉터
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  target_value: number;
+  current_value: number;
+  start_date: string;
+  end_date: string;
+  participants_count: number;
+  is_active: boolean;
+}
 
-// 응답 인터셉터 (토큰 만료 처리)
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+interface HealthData {
+  id: string;
+  user_id: string;
+  data_type: string;
+  value: number;
+  unit: string;
+  recorded_at: string;
+}
 
 // Auth API
 export const authAPI = {
@@ -40,15 +58,25 @@ export const authAPI = {
     formData.append('username', email);
     formData.append('password', password);
     
-    const response = await api.post('/auth/login', formData, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const response = await fetch('http://localhost:8000/api/auth/login', {
+      method: 'POST',
+      body: formData,
     });
-    return response.data;
+    
+    if (!response.ok) {
+      throw new Error(`Login failed: ${response.status}`);
+    }
+    
+    return response.json();
   },
   
   getCurrentUser: async (): Promise<User> => {
-    const response = await api.get('/auth/me');  // /api/ 제거
-    return response.data;
+    const response = await fetch('http://localhost:8000/api/auth/me', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   },
   
   logout: () => {
@@ -56,98 +84,114 @@ export const authAPI = {
   }
 };
 
-// Users API 수정
+// Users API
 export const usersAPI = {
-  // 현재 사용자만 가져오기 (목록 대신)
-  getCurrentUser: async (): Promise<User> => {
-    const response = await api.get('/auth/me');
-    return response.data;
+  getUsers: async (skip = 0, limit = 100): Promise<User[]> => {
+    const response = await fetch(`http://localhost:8000/api/users/?skip=${skip}&limit=${limit}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   },
   
   getUserById: async (userId: string): Promise<User> => {
-    const response = await api.get(`/users/${userId}`);
-    return response.data;
-  },
-  
-  // 사용자 목록은 임시로 현재 사용자만 반환
-  getUsers: async (skip = 0, limit = 100): Promise<User[]> => {
-    try {
-      const currentUser = await api.get('/auth/me');
-      return [currentUser.data]; // 배열로 감싸서 반환
-    } catch (error) {
-      console.error('Failed to get users:', error);
-      return [];
-    }
-  },
-  
-  updateUser: async (userId: string, userData: Partial<User>): Promise<User> => {
-    const response = await api.put(`/users/${userId}`, userData);
-    return response.data;
-  },
-  
-  deleteUser: async (userId: string): Promise<void> => {
-    await api.delete(`/users/${userId}`);
+    const response = await fetch(`http://localhost:8000/api/users/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   }
 };
 
 // Workouts API
 export const workoutsAPI = {
-  getWorkouts: async (skip = 0, limit = 100): Promise<WorkoutSession[]> => {
-    const response = await api.get(`/api/workouts/?skip=${skip}&limit=${limit}`);
-    return response.data;
+  getWorkouts: async (): Promise<WorkoutSession[]> => {
+    const response = await fetch('http://localhost:8000/api/workouts/', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   },
   
   getUserWorkouts: async (userId: string): Promise<WorkoutSession[]> => {
-    const response = await api.get(`/api/workouts/user/${userId}`);
-    return response.data;
+    // Mock data for now
+    return [
+      {
+        id: "1",
+        user_id: userId,
+        exercise_type: "push_ups",
+        duration: 300,
+        calories_burned: 50,
+        pose_accuracy: 85,
+        created_at: "2024-01-01T10:00:00Z"
+      }
+    ];
   },
   
-  getWorkoutStats: async (period: '7d' | '30d' | '90d' = '30d') => {
-    const response = await api.get(`/api/workouts/stats?period=${period}`);
-    return response.data;
+  getWorkoutStats: async () => {
+    // Mock data
+    return {
+      total_workouts: 1250,
+      avg_duration: 32
+    };
   }
 };
 
-// Health Data API
+// Health API
 export const healthAPI = {
-  getHealthData: async (userId: string, dataType?: string): Promise<HealthData[]> => {
-    const params = dataType ? `?data_type=${dataType}` : '';
-    const response = await api.get(`/api/health/${userId}${params}`);
-    return response.data;
-  },
-  
-  addHealthData: async (healthData: Omit<HealthData, 'id' | 'recorded_at'>): Promise<HealthData> => {
-    const response = await api.post('/api/health/', healthData);
-    return response.data;
+  getHealthData: async (userId: string): Promise<HealthData[]> => {
+    // Mock data for now
+    return [
+      {
+        id: "1",
+        user_id: userId,
+        data_type: "nutrition",
+        value: 2000,
+        unit: "calories",
+        recorded_at: "2024-01-01T12:00:00Z"
+      }
+    ];
   }
 };
 
 // Challenges API
 export const challengesAPI = {
   getChallenges: async (): Promise<Challenge[]> => {
-    const response = await api.get('/api/challenges/');
-    return response.data;
+    const response = await fetch('http://localhost:8000/api/challenges/', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   },
   
-  createChallenge: async (challenge: Omit<Challenge, 'id' | 'current_value' | 'participants_count'>): Promise<Challenge> => {
-    const response = await api.post('/api/challenges/', challenge);
-    return response.data;
-  },
-  
-  joinChallenge: async (challengeId: string): Promise<void> => {
-    await api.post(`/api/challenges/${challengeId}/join`);
+  createChallenge: async (challenge: any): Promise<Challenge> => {
+    // Mock implementation
+    return {
+      id: "new",
+      title: challenge.title,
+      description: challenge.description,
+      target_value: challenge.target_value,
+      current_value: 0,
+      start_date: challenge.start_date,
+      end_date: challenge.end_date,
+      participants_count: 0,
+      is_active: true
+    };
   }
 };
 
 // Dashboard API
 export const dashboardAPI = {
   getStats: async (): Promise<DashboardStats> => {
-    const response = await api.get('/api/dashboard/stats');
-    return response.data;
-  },
-  
-  getRealtimeData: async () => {
-    const response = await api.get('/api/dashboard/realtime');
-    return response.data;
+    const response = await fetch('http://localhost:8000/api/dashboard/stats', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    return response.json();
   }
 };
