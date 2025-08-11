@@ -1,11 +1,10 @@
-// frontend/src/types/payment.ts
 export interface SubscriptionPlan {
   id: string;
   name: string;
   price: number;
   currency: string;
   interval: string;
-  features: string[];
+  features: string;  // JSON string
   max_exercises_per_day: number;
   max_ai_analysis: number;
   premium_content_access: boolean;

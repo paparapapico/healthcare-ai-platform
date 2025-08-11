@@ -1,62 +1,80 @@
-// 파일: ~/HealthcareAI/frontend/src/types/index.ts
 export interface User {
   id: string;
   email: string;
-  full_name: string;
-  is_active: boolean;
-  is_superuser: boolean;
+  name: string;  // full_name 대신 name
+  role: 'admin' | 'user';
+  profile?: {
+    age?: number;
+    height?: number;
+    weight?: number;
+    fitness_goal?: string;
+  };
   created_at: string;
-  profile?: UserProfile;
+  last_active?: string;
 }
 
-export interface UserProfile {
-  height: number;
-  weight: number;
-  age: number;
-  gender: 'male' | 'female' | 'other';
-  activity_level: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active';
-}
-
-export interface WorkoutSession {
+export interface Exercise {
   id: string;
   user_id: string;
-  exercise_type: string;
+  type: string;
   duration: number;
   calories_burned: number;
-  pose_accuracy: number;
+  pose_accuracy?: number;
   created_at: string;
-  ai_feedback?: string;
 }
 
 export interface HealthData {
   id: string;
   user_id: string;
-  data_type: 'nutrition' | 'sleep' | 'hydration';
-  value: number;
-  unit: string;
-  recorded_at: string;
+  date: string;
+  steps?: number;
+  calories?: number;
+  sleep_hours?: number;
+  water_intake?: number;
+  weight?: number;
 }
 
 export interface Challenge {
   id: string;
   title: string;
   description: string;
-  target_value: number;
-  current_value: number;
+  type: 'steps' | 'exercise' | 'nutrition';
+  target: number;
   start_date: string;
   end_date: string;
-  participants_count: number;
+  participants: number;
   is_active: boolean;
 }
 
+export interface SystemMetrics {
+  active_users: number;
+  total_exercises: number;
+  server_status: 'healthy' | 'warning' | 'error';
+  response_time: number;
+  memory_usage: number;
+  cpu_usage: number;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: string;
+}
+
 export interface DashboardStats {
-  total_users: number;
-  active_users_today: number;
-  total_workouts: number;
-  total_challenges: number;
-  avg_session_duration: number;
-  top_exercises: Array<{
-    exercise_type: string;
-    count: number;
-  }>;
+  totalUsers: number;
+  activeUsers: number;
+  totalExercises: number;
+  todayExercises: number;
+  avgSessionDuration: number;
+  userGrowth: ChartData[];
+  exerciseTypes: ChartData[];
+  dailyActivity: ChartData[];
+}
+
+export interface ChartData {
+  name: string;
+  value: number;
+  date?: string;
 }
