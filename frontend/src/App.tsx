@@ -1,4 +1,4 @@
-// frontend/src/App.tsx 완전 수정
+// frontend/src/App.tsx - 수정됨
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -89,49 +89,51 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AuthProvider>
-          <Router>
-            <Routes>
-              {/* 로그인 페이지 */}
-              <Route path="/login" element={<LoginPage />} />
-              
-              {/* 보호된 라우트들 */}
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/dashboard" element={<DashboardPage />} />
-                        
-                        {/* Admin Routes */}
-                        <Route path="/users" element={<UsersPage />} />
-                        <Route path="/challenges" element={<ChallengesPage />} />
-                        <Route path="/notifications" element={<NotificationsPage />} />
-                        
-                        {/* Analytics & Monitoring */}
-                        <Route path="/monitoring" element={<MonitoringPage />} />
-                        <Route path="/analytics" element={<AnalyticsPage />} />
-                        
-                        {/* Payment & Subscription Routes */}
-                        <Route path="/subscription" element={<SubscriptionPage />} />
-                        <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                        <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-                        <Route path="/payment/history" element={<PaymentHistoryPage />} />
-                      </Routes>
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Router>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <div className="App">
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AuthProvider>
+            <Router>
+              <Routes>
+                {/* 로그인 페이지 */}
+                <Route path="/login" element={<LoginPage />} />
+                
+                {/* 보호된 라우트들 */}
+                <Route
+                  path="/*"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Routes>
+                          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                          <Route path="/dashboard" element={<DashboardPage />} />
+                          
+                          {/* Admin Routes */}
+                          <Route path="/users" element={<UsersPage />} />
+                          <Route path="/challenges" element={<ChallengesPage />} />
+                          <Route path="/notifications" element={<NotificationsPage />} />
+                          
+                          {/* Analytics & Monitoring */}
+                          <Route path="/monitoring" element={<MonitoringPage />} />
+                          <Route path="/analytics" element={<AnalyticsPage />} />
+                          
+                          {/* Payment & Subscription Routes */}
+                          <Route path="/subscription" element={<SubscriptionPage />} />
+                          <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                          <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                          <Route path="/payment/history" element={<PaymentHistoryPage />} />
+                        </Routes>
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </Router>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </div>
   );
 }
 

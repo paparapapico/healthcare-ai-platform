@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../types';
 import { apiService } from '../services/api';
-import { wsService } from '../services/websocket';
 
 interface AuthContextType {
   user: User | null;
@@ -31,7 +30,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 앱 시작 시 토큰 확인
     const token = localStorage.getItem('access_token');
     if (token) {
       checkAuthStatus();
@@ -45,11 +43,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.getCurrentUser();
       if (response.success) {
         setUser(response.data);
-        // WebSocket 연결
-        const token = localStorage.getItem('access_token');
-        if (token) {
-          wsService.connect(token);
-        }
       }
     } catch (error) {
       localStorage.removeItem('access_token');
@@ -64,8 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.success) {
         localStorage.setItem('access_token', response.data.access_token);
         setUser(response.data.user);
-        // WebSocket 연결
-        wsService.connect(response.data.access_token);
         return true;
       }
       return false;
@@ -78,7 +69,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('access_token');
     setUser(null);
-    wsService.disconnect();
   };
 
   const value: AuthContextType = {
