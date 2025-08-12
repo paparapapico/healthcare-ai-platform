@@ -1,0 +1,47 @@
+# Core ML/AI Libraries
+tensorflow==2.13.0
+torch==2.0.1
+torchvision==0.15.2
+mediapipe==0.10.7
+opencv-python==4.8.1.78
+
+# Data Processing
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.0
+scipy==1.11.1
+
+# Model Optimization
+tensorflow-lite==2.13.0
+onnx==1.14.0
+onnxruntime==1.15.1
+coremltools==6.3.0
+
+# Visualization & Analysis
+matplotlib==3.7.2
+seaborn==0.12.2
+plotly==5.15.0
+
+# Video Processing
+moviepy==1.0.3
+imageio==2.31.1
+pillow==10.0.0
+
+# Development Tools
+jupyter==1.0.0
+ipykernel==6.25.0
+tqdm==4.65.0
+
+# API & Web
+fastapi==0.100.0
+uvicorn==0.23.1
+python-multipart==0.0.6
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Utilities
+pyyaml==6.0
+python-dotenv==1.0.0
+click==8.1.6

@@ -1,0 +1,27 @@
+{
+  "created_at": "2025-08-13T00:40:18.498504",
+  "total_datasets": 3,
+  "datasets": [
+    {
+      "filename": "synthetic_coco_keypoints.json",
+      "filepath": "data\\public_datasets\\synthetic_coco_keypoints.json",
+      "size_mb": 0.15082359313964844,
+      "type": "coco_keypoints",
+      "sample_count": 100
+    },
+    {
+      "filename": "synthetic_mpii_fitness.json",
+      "filepath": "data\\public_datasets\\synthetic_mpii_fitness.json",
+      "size_mb": 0.08099555969238281,
+      "type": "mpii_pose",
+      "sample_count": 50
+    },
+    {
+      "filename": "openpose_sample.json",
+      "filepath": "data\\public_datasets\\openpose_sample.json",
+      "size_mb": 0.000152587890625,
+      "type": "openpose",
+      "sample_count": 1
+    }
+  ]
+}

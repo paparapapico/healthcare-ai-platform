@@ -1,0 +1,12 @@
+[
+  {
+    "source": "Olympic API",
+    "status": "접근 가능",
+    "data_type": "메타데이터"
+  },
+  {
+    "source": "Sports Open Data",
+    "status": "접근 가능",
+    "data_type": "메타데이터"
+  }
+]

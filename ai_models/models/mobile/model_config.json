@@ -1,0 +1,66 @@
+{
+  "models": {
+    "push_up": {
+      "tflite_path": "models/mobile/push_up_model.tflite",
+      "input_shape": [
+        1,
+        59
+      ],
+      "phases": [
+        "ready",
+        "down",
+        "up"
+      ],
+      "min_confidence": 0.7
+    },
+    "squat": {
+      "tflite_path": "models/mobile/squat_model.tflite",
+      "input_shape": [
+        1,
+        59
+      ],
+      "phases": [
+        "standing",
+        "down",
+        "up"
+      ],
+      "min_confidence": 0.7
+    },
+    "deadlift": {
+      "tflite_path": "models/mobile/deadlift_model.tflite",
+      "input_shape": [
+        1,
+        59
+      ],
+      "phases": [
+        "ready",
+        "lift",
+        "lock",
+        "lower"
+      ],
+      "min_confidence": 0.7
+    },
+    "plank": {
+      "tflite_path": "models/mobile/plank_model.tflite",
+      "input_shape": [
+        1,
+        59
+      ],
+      "phases": [
+        "holding"
+      ],
+      "min_confidence": 0.7
+    }
+  },
+  "preprocessing": {
+    "normalize_keypoints": true,
+    "calculate_angles": true,
+    "smooth_predictions": true,
+    "smoothing_window": 3
+  },
+  "feedback": {
+    "update_interval_ms": 500,
+    "rep_count_threshold": 0.8,
+    "form_warning_threshold": 60
+  }
+}

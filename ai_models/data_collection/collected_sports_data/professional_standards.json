@@ -1,0 +1,69 @@
+{
+  "basketball": {
+    "nba_shooting_stats": {
+      "stephen_curry": {
+        "three_point_percentage": 0.427,
+        "free_throw_percentage": 0.908,
+        "release_time": 0.4,
+        "shooting_form_consistency": 0.95,
+        "data_source": "NBA Official Stats"
+      },
+      "klay_thompson": {
+        "three_point_percentage": 0.412,
+        "catch_and_shoot_accuracy": 0.445,
+        "shooting_form_consistency": 0.93
+      }
+    },
+    "collected_videos": 50,
+    "quality_metrics": "professional_grade"
+  },
+  "soccer": {
+    "fifa_standards": {
+      "cristiano_ronaldo": {
+        "shot_power": "120+ km/h",
+        "free_kick_accuracy": 0.85,
+        "penalty_conversion": 0.84,
+        "data_source": "FIFA Official Stats"
+      },
+      "lionel_messi": {
+        "dribbling_success_rate": 0.62,
+        "shot_accuracy": 0.51,
+        "pass_completion": 0.85
+      }
+    },
+    "collected_videos": 45,
+    "quality_metrics": "world_cup_standard"
+  },
+  "golf": {
+    "pga_tour_stats": {
+      "tiger_woods": {
+        "driving_accuracy": 0.609,
+        "greens_in_regulation": 0.698,
+        "putting_average": 1.731,
+        "data_source": "PGA Tour Stats"
+      },
+      "rory_mcilroy": {
+        "driving_distance": 319.3,
+        "club_head_speed": 122.5,
+        "ball_speed": 182.4
+      }
+    },
+    "collected_videos": 30,
+    "quality_metrics": "tour_professional"
+  },
+  "bodyweight": {
+    "olympic_gymnastics": {
+      "form_perfection_score": 9.9,
+      "difficulty_score": 6.8,
+      "execution_score": 9.5,
+      "data_source": "FIG Olympic Standards"
+    },
+    "calisthenics_champions": {
+      "world_record_pushups": 10507,
+      "world_record_pullups": 7715,
+      "plank_world_record": 9.5
+    },
+    "collected_videos": 40,
+    "quality_metrics": "olympic_standard"
+  }
+}

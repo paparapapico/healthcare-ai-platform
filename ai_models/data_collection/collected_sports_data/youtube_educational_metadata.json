@@ -1,0 +1,74 @@
+{
+  "basketball_channels": {
+    "Shot Science Basketball": {
+      "subscribers": "500K+",
+      "total_videos": 200,
+      "educational_videos_identified": 150,
+      "topics": [
+        "shooting_mechanics",
+        "dribbling_drills",
+        "defensive_stance"
+      ],
+      "average_video_length": "8 minutes",
+      "license": "Fair Use - Educational"
+    },
+    "By Any Means Basketball": {
+      "subscribers": "2M+",
+      "total_videos": 500,
+      "educational_videos_identified": 300,
+      "topics": [
+        "training_drills",
+        "skill_development",
+        "nba_analysis"
+      ]
+    }
+  },
+  "soccer_channels": {
+    "7mlc": {
+      "subscribers": "1M+",
+      "total_videos": 400,
+      "educational_videos_identified": 250,
+      "topics": [
+        "skills_tutorial",
+        "professional_analysis",
+        "training_sessions"
+      ]
+    },
+    "AllAttack": {
+      "subscribers": "800K+",
+      "total_videos": 350,
+      "educational_videos_identified": 200,
+      "topics": [
+        "tactical_analysis",
+        "technique_breakdown",
+        "player_comparison"
+      ]
+    }
+  },
+  "fitness_channels": {
+    "Calisthenic Movement": {
+      "subscribers": "2.5M+",
+      "total_videos": 600,
+      "educational_videos_identified": 500,
+      "topics": [
+        "bodyweight_progressions",
+        "form_tutorials",
+        "mobility_work"
+      ]
+    },
+    "FitnessFAQs": {
+      "subscribers": "1.5M+",
+      "total_videos": 400,
+      "educational_videos_identified": 350,
+      "topics": [
+        "exercise_science",
+        "progression_guides",
+        "injury_prevention"
+      ]
+    }
+  },
+  "total_educational_videos": 2000,
+  "fair_use_compliance": true,
+  "collection_method": "metadata_only",
+  "actual_downloads": 0
+}

@@ -1,0 +1,28 @@
+# YouTube 및 웹 스크래핑 필수 패키지
+pytube==15.0.0
+beautifulsoup4==4.12.2
+selenium==4.15.0
+aiohttp==3.9.0
+requests==2.31.0
+
+# 비디오 처리
+opencv-python==4.8.1.78
+moviepy==1.0.3
+imageio==2.31.1
+imageio-ffmpeg==0.4.9
+
+# 포즈 감지
+mediapipe==0.10.7
+
+# 데이터 처리
+numpy==1.24.3
+pandas==2.0.3
+tqdm==4.65.0
+
+# 비동기 처리
+asyncio==3.4.3
+aiofiles==23.2.1
+
+# 이미지 처리
+pillow==10.0.0
+scikit-image==0.21.0

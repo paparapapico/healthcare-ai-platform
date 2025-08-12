@@ -1,0 +1,95 @@
+{
+  "collected": [
+    {
+      "name": "Kinetics-700 Sports Subset",
+      "source": "Google DeepMind",
+      "license": "Apache 2.0",
+      "sports_categories": [
+        "basketball",
+        "soccer",
+        "golf",
+        "tennis",
+        "swimming",
+        "gymnastics",
+        "weightlifting"
+      ],
+      "total_videos": 15000,
+      "quality": "720p",
+      "annotations": "action_labels",
+      "download_url": "https://github.com/deepmind/kinetics-i3d",
+      "status": "metadata_collected"
+    },
+    {
+      "name": "UCF101 Sports Actions",
+      "source": "University of Central Florida",
+      "license": "Research Use",
+      "sports_categories": [
+        "basketball_shooting",
+        "golf_swing",
+        "soccer_penalty",
+        "tennis_swing",
+        "weightlifting",
+        "push_ups"
+      ],
+      "total_videos": 13320,
+      "quality": "320x240",
+      "annotations": "action_recognition",
+      "download_url": "https://www.crcv.ucf.edu/data/UCF101.php",
+      "status": "metadata_collected"
+    },
+    {
+      "name": "MPII Human Pose Dataset",
+      "source": "Max Planck Institute",
+      "license": "Simplified BSD",
+      "sports_activities": [
+        "aerobics",
+        "basketball",
+        "football",
+        "golf",
+        "gymnastics",
+        "martial_arts",
+        "tennis"
+      ],
+      "total_images": 25000,
+      "annotations": "16_body_joints",
+      "download_url": "http://human-pose.mpi-inf.mpg.de/",
+      "status": "metadata_collected"
+    },
+    {
+      "name": "Sports-1M",
+      "source": "Stanford University",
+      "license": "Research Use",
+      "sports_categories": 487,
+      "total_videos": 1133158,
+      "quality": "variable",
+      "annotations": "sport_classification",
+      "download_url": "https://cs.stanford.edu/people/karpathy/deepvideo/",
+      "status": "metadata_collected"
+    },
+    {
+      "name": "Olympic Sports Dataset",
+      "source": "Stanford Vision Lab",
+      "license": "Research Use",
+      "sports_categories": [
+        "high_jump",
+        "long_jump",
+        "triple_jump",
+        "pole_vault",
+        "discus_throw",
+        "hammer_throw",
+        "javelin_throw",
+        "shot_put",
+        "basketball_layup",
+        "bowling",
+        "tennis_serve"
+      ],
+      "total_videos": 800,
+      "quality": "480p",
+      "annotations": "sport_action_labels",
+      "download_url": "http://vision.stanford.edu/Datasets/OlympicSports/",
+      "status": "metadata_collected"
+    }
+  ],
+  "total_size_gb": 150,
+  "samples_count": 1187278
+}

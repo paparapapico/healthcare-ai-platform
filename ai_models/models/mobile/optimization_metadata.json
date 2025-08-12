@@ -1,0 +1,16 @@
+{
+  "optimized_at": "C:\\Users\\Leehanjun\\HealthcareAI\\ai_models",
+  "models": [
+    "push_up",
+    "push_up_fp32",
+    "squat",
+    "squat_fp32",
+    "deadlift",
+    "deadlift_fp32",
+    "plank",
+    "plank_fp32"
+  ],
+  "total_original_size_mb": 3.026123046875,
+  "total_optimized_size_mb": 0.4695625305175781,
+  "average_compression_ratio": 84.48303247277128
+}
