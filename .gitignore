@@ -3,6 +3,9 @@
 __pycache__/
 venv/
 .env
+*.h5
+*.pkl
+*.tflite
 
 # Node
 node_modules/
@@ -14,3 +17,18 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Large data files (100MB+)
+ai_models/data/validated_dataset/*.json
+ai_models/data/simple_generated/*.json
+ai_models/data/virtual_athletes/*.json
+
+# Database
+*.db
+healthcare_ai.db
+test_challenges.db
+
+# Temporary
+nul
+*.tmp
+*.bak
